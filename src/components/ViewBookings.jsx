@@ -59,10 +59,10 @@ const ViewBookings = () => {
       await axios.put(`${API_URL}/${editingBooking._id}`, {
         ...data,
       });
-
+      showData();
       toast.success("Booking updated successfully!");
       setEditingBooking(null);
-      showData();
+      
     } catch (error) {
       console.error("Error updating booking:", error);
       toast.error("Failed to update booking. Please try again.");

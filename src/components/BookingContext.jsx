@@ -28,14 +28,19 @@ export const BookingProvider = ({ children }) => {
 
   // Delete a booking
   const deleteBooking = async (_id) => {
-    try {
-      await axios.delete(`${API_URL}/${_id}`);
-      toast.success("Booking deleted successfully!");
-      setBookings((prevData) => prevData.filter((item) => item._id !== _id));
-    } catch (err) {
-      toast.error("Failed to delete booking.");
-      console.error("Error deleting booking:", err);
+    const confirm = window.confirm("Are you sure you want to delete?");
+
+    if(confirm){
+      try {
+        await axios.delete(`${API_URL}/${_id}`);
+        toast.success("Booking deleted successfully!");
+        setBookings((prevData) => prevData.filter((item) => item._id !== _id));
+      } catch (err) {
+        toast.error("Failed to delete booking.");
+        console.error("Error deleting booking:", err);
+      }
     }
+    
   };
 
  
