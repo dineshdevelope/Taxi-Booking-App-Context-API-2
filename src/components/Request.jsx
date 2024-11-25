@@ -1,10 +1,11 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import toast from "react-hot-toast";
 import API_URL from "../Constants/URL.jsx";
+import BookingContext from './BookingContext.jsx';
 
 
 const formSchema = z.object({
@@ -18,6 +19,7 @@ const formSchema = z.object({
 
 const Request = () => {
 
+  const { showData } = useContext(BookingContext);
   const {
     register,
     handleSubmit,
@@ -29,18 +31,6 @@ const Request = () => {
 
   const sendTask = async (data) => {
     try {
-  
-      /* const dateObj = new Date(data.date);
-      
-      const formattedDate = dateObj.toLocaleString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).replace(',', '');
-
-      console.log({ ...data, date: formattedDate }); */
 
       await axios.post(API_URL, {
         username: data.username,
@@ -106,6 +96,8 @@ const Request = () => {
         </div>
       ))
       reset();
+    } finally{
+           showData()
     }
   };
 

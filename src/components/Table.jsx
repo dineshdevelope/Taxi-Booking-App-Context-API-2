@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import axios from 'axios';
 import API_URL from '../Constants/URL.jsx';
+import BookingContext from './BookingContext.jsx';
 
 const Table = () => {
-  const [formdata, setFormdata] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
 
-  const showData = async () => {
-    setLoading(true); // Start loading
-    setError(null); // Reset error
-    try {
-      const res = await axios.get(API_URL);
-      setFormdata(res.data);
-    } catch (err) {
-      setError("Failed to load travel requests. Please try again.");
-      console.error("Error fetching data:", err);
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
+  const { bookings, loading, error } = useContext(BookingContext);
+ 
+
+ 
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -31,9 +20,7 @@ const Table = () => {
     return `${day}-${month}-${year} T ${hours}:${minutes}`;
   }
 
-  useEffect(() => {
-    showData();
-  }, []);
+  
 
   return (
     <div>
@@ -41,7 +28,7 @@ const Table = () => {
         <h1>
           Travel Requests{" "}
           <span className="bg-red-400 p-2 rounded-md text-white font-semibold text-sm mx-2">
-            {formdata.length}
+            {bookings.length}
           </span>
         </h1>
       </div>
@@ -61,7 +48,7 @@ const Table = () => {
       )}
 
       {/* Table Content */}
-      {!loading && !error && formdata.length > 0 ? (
+      {!loading && !error && bookings.length > 0 ? (
         <div className="overflow-x-auto max-w-5xl mx-auto">
           <table className="table">
             <thead>
@@ -72,7 +59,7 @@ const Table = () => {
               </tr>
             </thead>
             <tbody>
-              {formdata.map((item, index) => (
+              {bookings.map((item, index) => (
                 <tr className="bg-base-200" key={item._id}>
                   <td>{index + 1}</td>
                   <td>{item.username}</td>

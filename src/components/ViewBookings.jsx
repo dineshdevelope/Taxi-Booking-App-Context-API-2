@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import BookingContext from "./BookingContext";
 
 const ViewBookings = () => {
-  const { bookings, loading, error, deleteBooking, updateBooking } = useContext(BookingContext);
+  const { bookings, loading, error, deleteBooking, updateBooking,showData } = useContext(BookingContext);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
