@@ -9,6 +9,7 @@ export const BookingProvider = ({ children }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
   // Fetch bookings
   const showData = async () => {
@@ -37,19 +38,7 @@ export const BookingProvider = ({ children }) => {
     }
   };
 
-  // Update a booking
-  const updateBooking = async (id, updatedData) => {
-    try {
-      await axios.put(`${API_URL}/${id}`, updatedData);
-      toast.success("Booking updated successfully!");
-      setBookings((prev) =>
-        prev.map((booking) => (booking._id === id ? { ...booking, ...updatedData } : booking))
-      );
-    } catch (err) {
-      toast.error("Failed to update booking.");
-      console.error("Error updating booking:", err);
-    }
-  };
+ 
 
    useEffect(() => {
     showData();
@@ -58,7 +47,7 @@ export const BookingProvider = ({ children }) => {
 
   return (
     <BookingContext.Provider
-      value={{ bookings, loading, error, showData, deleteBooking, updateBooking }}
+      value={{ bookings, loading, error, showData, deleteBooking }}
     >
       {children}
     </BookingContext.Provider>

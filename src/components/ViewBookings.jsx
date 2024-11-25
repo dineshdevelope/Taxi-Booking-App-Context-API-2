@@ -1,8 +1,34 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import BookingContext from "./BookingContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import axios from "axios";
+import toast from "react-hot-toast";
+import API_URL from "../Constants/URL.jsx";
+
+const formSchema = z.object({
+  username: z.string().min(4).max(20),
+  phone: z.string().regex(/^\d{10}$/, { message: "Phone number must be exactly 10 digits" }),
+  date: z.string(),
+  pickupaddress: z.string().min(3).max(200),
+  dropaddress: z.string().min(3).max(200),
+  kilometre: z.string().min(0).max(800).optional(),
+});
 
 const ViewBookings = () => {
-  const { bookings, loading, error, deleteBooking, updateBooking,showData } = useContext(BookingContext);
+  const { bookings, loading, error, deleteBooking,showData } = useContext(BookingContext);
+  const [editingBooking, setEditingBooking] = useState(null);
+  
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -12,6 +38,35 @@ const ViewBookings = () => {
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${day}-${month}-${year} T ${hours}:${minutes}`;
+  };
+
+  const handleEdit=(item)=>{
+    console.log(item);
+    setEditingBooking(item);
+    reset({
+      username: item.username,
+      phone: item.phone,
+      date: item.date,
+      pickupaddress: item.pickupaddress,
+      dropaddress: item.dropaddress,
+      kilometre: item.kilometre,
+    });
+    
+  }
+
+  const updateBooking = async (data) => {
+    try {
+      await axios.put(`${API_URL}/${editingBooking._id}`, {
+        ...data,
+      });
+
+      toast.success("Booking updated successfully!");
+      setEditingBooking(null);
+      showData();
+    } catch (error) {
+      console.error("Error updating booking:", error);
+      toast.error("Failed to update booking. Please try again.");
+    }
   };
 
   return (
@@ -35,7 +90,98 @@ const ViewBookings = () => {
               className="max-w-sm p-6 my-5 bg-white border border-pink-300 shadow-orange-600 border-x-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
               key={item._id}
             >
-              <div>
+              { editingBooking && editingBooking._id === item._id ? (
+                  <form className="space-y-4" onSubmit={handleSubmit(updateBooking)}>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Username *</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="input input-bordered w-full"
+                        {...register("username")}
+                      />
+                      {errors.username && (
+                        <p className="text-red-600 text-sm">{errors.username.message}</p>
+                      )}
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Phone *</span>
+                      </label>
+                      <input
+                        type="tel"
+                        className="input input-bordered w-full"
+                        {...register("phone")}
+                      />
+                      {errors.phone && (
+                        <p className="text-red-600 text-sm">{errors.phone.message}</p>
+                      )}
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Date *</span>
+                      </label>
+                      <input
+                        type="datetime-local"
+                        className="input input-bordered w-full"
+                        {...register("date")}
+                      />
+                      {errors.date && (
+                        <p className="text-red-600 text-sm">{errors.date.message}</p>
+                      )}
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Pickup Address *</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="input input-bordered w-full"
+                        {...register("pickupaddress")}
+                      />
+                      {errors.pickupaddress && (
+                        <p className="text-red-600 text-sm">{errors.pickupaddress.message}</p>
+                      )}
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Drop Address *</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="input input-bordered w-full"
+                        {...register("dropaddress")}
+                      />
+                      {errors.dropaddress && (
+                        <p className="text-red-600 text-sm">{errors.dropaddress.message}</p>
+                      )}
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">Kilometers (Optional)</span>
+                      </label>
+                      <input
+                        type="number"
+                        className="input input-bordered w-full"
+                        {...register("kilometre")}
+                      />
+                      {errors.kilometre && (
+                        <p className="text-red-600 text-sm">{errors.kilometre.message}</p>
+                      )}
+                    </div>
+                    <button type="submit" className="btn btn-secondary w-full mt-4">
+                      Update Booking
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingBooking(null)}
+                      className="btn btn-outline w-full mt-2"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                )  : (<div>
                 <div className="flex sm:flex-none items-center justify-evenly">
                   <p className="mb-2 text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                     {index + 1}
@@ -58,7 +204,7 @@ const ViewBookings = () => {
                 </div>
                 <div className="flex justify-center">
                   <button
-                    onClick={() => updateBooking(item._id)}
+                    onClick={() => handleEdit(item)}
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Update
@@ -70,7 +216,7 @@ const ViewBookings = () => {
                     Delete
                   </button>
                 </div>
-              </div>
+              </div>)}
             </div>
           ))}
         </div>
