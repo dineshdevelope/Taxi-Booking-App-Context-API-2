@@ -222,7 +222,7 @@ const ViewBookings = () => {
         </div>
       ) : (
         <div className="text-center pt-5">
-          <p className="text-gray-500 font-mono">No bookings available.</p>
+          <p className="text-gray-500 font-mono">No bookings yet. Create one now!</p>
         </div>
       )}
     </div>

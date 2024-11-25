@@ -43,6 +43,11 @@ export const BookingProvider = ({ children }) => {
     
   };
 
+  const totalKilometers = bookings.reduce((sum, booking) => {
+    const km = parseFloat(booking.kilometre || 0);
+    return sum + (isNaN(km) ? 0 : km);
+  }, 0);
+
  
 
    useEffect(() => {
@@ -52,7 +57,7 @@ export const BookingProvider = ({ children }) => {
 
   return (
     <BookingContext.Provider
-      value={{ bookings, loading, error, showData, deleteBooking }}
+      value={{ bookings, loading, error, showData, deleteBooking,totalKilometers }}
     >
       {children}
     </BookingContext.Provider>

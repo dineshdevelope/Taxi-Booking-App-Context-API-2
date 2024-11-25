@@ -5,7 +5,7 @@ import BookingContext from './BookingContext';
 
 const Header = () => {
 
-  const { bookings } = useContext(BookingContext);
+  const { bookings,totalKilometers } = useContext(BookingContext);
 
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isRequestDropdownOpen, setRequestDropdownOpen] = useState(false);
@@ -57,7 +57,7 @@ const Header = () => {
                   className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
                   <div className="card-body">
                     <span className="text-lg font-bold">{bookings.length || 0} Requests</span>
-                    <span className="text-info">Total K/m: 100</span>
+                    <span className="text-info">Total K/m: {totalKilometers}</span>
                     <div className="card-actions">
                       <Link to={"/viewrequest"} className="btn btn-neutral btn-block" onClick={closeDropdowns}>View Request</Link>
                     </div>
