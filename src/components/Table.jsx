@@ -49,7 +49,7 @@ const Table = () => {
 
       {/* Table Content */}
       {!loading && !error && bookings.length > 0 ? (
-        <div className="overflow-x-auto max-w-5xl mx-auto">
+        <div className="overflow-x-auto max-w-5xl mx-auto rounded border border-gray-800  mt-3 sm:mt-5 ">
           <table className="table">
             <thead>
               <tr>
@@ -60,8 +60,8 @@ const Table = () => {
             </thead>
             <tbody>
               {bookings.map((item, index) => (
-                <tr className="bg-base-200" key={item._id}>
-                  <td>{index + 1}</td>
+                <tr className="bg-rose-400 text-white font-semibold" key={item._id}>
+                  <td >{index + 1}</td>
                   <td>{item.username}</td>
                   <td>{formatDate(item.date.slice(0, 16))}</td>
                 </tr>
